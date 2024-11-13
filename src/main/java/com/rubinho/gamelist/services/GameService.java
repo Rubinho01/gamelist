@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.rubinho.gamelist.dto.GameDTO;
 import com.rubinho.gamelist.dto.GameMinDTO;
+import com.rubinho.gamelist.entities.Game;
+import com.rubinho.gamelist.projections.GameMinProjection;
 import com.rubinho.gamelist.repositories.GameRepository;
 
 @Service
@@ -20,11 +22,12 @@ public class GameService {
 		
 	}
 	public GameDTO findById(Long id) throws Exception {
-		var result = gameRepository.findById(id);
-		if(result.isPresent()) {
-			return new GameDTO(result.get());
-		}else {
-			throw new Exception("Jogo não encontrado para o ID" + id);
-		}
+		Game result = gameRepository.findById(id).get();
+		return new GameDTO(result);
+	}
+	public List<GameMinDTO> findByList(Long listId){
+		List<GameMinProjection> result = gameRepository.searchByList(listId);
+		return result.stream().map(x -> new GameMinDTO(x)).toList();
+		
 	}
 }
